@@ -19,7 +19,7 @@ By running this script, you acknowledge these risks and agree to take full respo
 To run the default installation, execute the following command in your terminal. This will download the script and run it with root privileges.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/overkill-pi-setup/main/overkill-install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/flashingcursor/overkill-pi-setup/main/overkill-install.sh | sudo bash
 ```
 ---
 
@@ -32,7 +32,7 @@ You can include optional addon packages by adding flags to the command.
 To include the repository for the **Umbrella** addon, use the `--umbrella` flag:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --umbrella
+curl -sSL https://raw.githubusercontent.com/flashingcursor/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --umbrella
 ```
 
 ### Install Adult Addon Repository
@@ -40,12 +40,12 @@ curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/overkill-pi-setup/main
 To include the repository for adult addons (like **Cumination**), use the `--fap` flag:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --fap
+curl -sSL https://raw.githubusercontent.com/flashingcursor/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --fap
 ```
 ### Install Both
 
 You can combine flags:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --umbrella --fap
+curl -sSL https://raw.githubusercontent.com/flashingcursor/overkill-pi-setup/main/overkill-install.sh | sudo bash -s -- --umbrella --fap
 ```
