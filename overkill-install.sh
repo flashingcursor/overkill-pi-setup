@@ -2,8 +2,8 @@
 # OVERKILL - Media Center Setup for Raspberry Pi 5 + NVMe
 # Version: 2.4.2-REMOTE_AWARE
 # Maximum performance, all the features, no compromises
-# Run as: sudo ./overkill-install.sh [--umbrella] [--fap]
-# Or via curl: curl -sSL [URL] | sudo bash -s -- [--args]
+# Run as: sudo ./overkill-install.sh
+# Or via curl: curl -sSL [URL] | sudo bash
 
 set -e
 

@@ -198,10 +198,10 @@ main() {
     echo -e "\n${GREEN}✓ OVERKILL Bootstrap Complete!${NC}"
     echo -e "${CYAN}Run 'sudo overkill' to launch the configuration tool${NC}"
     
-    # Launch installer automatically with any provided arguments
+    # Launch installer automatically
     echo
     echo -e "${CYAN}Launching OVERKILL installer...${NC}"
-    exec /opt/overkill/venv/bin/python -m overkill.installer "$@"
+    exec /opt/overkill/venv/bin/python -m overkill.installer
 }
 
 # Run main function

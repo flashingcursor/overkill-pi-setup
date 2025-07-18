@@ -41,8 +41,6 @@ class OverkillInstaller:
         self.tty_config = TTYConfigurator()
         self.overclock = OverclockManager()
         self.thermal = ThermalManager()
-        self.install_umbrella = False
-        self.install_fap = False
         
     def show_banner(self):
         """Show OVERKILL banner with MAXIMUM ENTHUSIASM"""
@@ -278,15 +276,13 @@ To cancel the installation, press CTRL+C at any time.
         else:
             console.print("[yellow]Skipping Kodi build - install manually later[/yellow]")
     
-    def install_addons(self):
-        """Install addon repositories if requested"""
-        if self.install_umbrella:
-            console.print("[green]Installing Umbrella addon repository...[/green]")
-            # Implementation would go here
-        
-        if self.install_fap:
-            console.print("[green]Installing FEN/Seren addon pack...[/green]")
-            # Implementation would go here
+    def show_addon_info(self):
+        """Show information about addon repositories"""
+        console.print("\n[cyan]Addon repositories can be installed from the configurator:[/cyan]")
+        console.print("- Umbrella Repository (premium all-in-one addon)")
+        console.print("- FEN/Seren Pack (popular streaming addons)")
+        console.print("- And many more!")
+        console.print("\n[yellow]Access via: Media Services → Addon Repositories[/yellow]")
     
     def finalize(self):
         """FINALIZE OVERKILL INSTALLATION"""
@@ -337,18 +333,14 @@ To cancel the installation, press CTRL+C at any time.
         self.configure_hardware()
         self.setup_thermal()
         self.build_kodi()
-        self.install_addons()
+        self.show_addon_info()
         self.finalize()
 
 
 @click.command()
-@click.option('--umbrella', is_flag=True, help='Install Umbrella addon repository')
-@click.option('--fap', is_flag=True, help='Install FEN/Seren addon pack')
-def main(umbrella: bool, fap: bool):
+def main():
     """OVERKILL Complete System Installer"""
     installer = OverkillInstaller()
-    installer.install_umbrella = umbrella
-    installer.install_fap = fap
     installer.run()
 
 

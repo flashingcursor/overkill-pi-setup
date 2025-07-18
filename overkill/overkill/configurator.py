@@ -10,6 +10,7 @@ from .core.config import Config
 from .core.system import get_system_detector, get_system_info
 from .core.logger import logger, setup_logging
 from .core.utils import is_root, format_bytes
+from .media.addon_manager import AddonManager
 
 
 class OverkillConfigurator:
@@ -19,6 +20,7 @@ class OverkillConfigurator:
         self.config = Config()
         self.system = get_system_detector()
         self.tui = OverkillTUI()
+        self.addon_manager = AddonManager()
         self.running = True
         
     def main_menu(self):
@@ -241,6 +243,7 @@ class OverkillConfigurator:
         """Media services configuration"""
         menu_items = [
             "Kodi Settings",
+            "Addon Repositories",
             "Network Shares (Samba)",
             "DLNA Server",
             "AirPlay Support",
@@ -253,10 +256,172 @@ class OverkillConfigurator:
             
             if choice is None or choice == len(menu_items) - 1:
                 break
+            elif choice == 0:
+                self.configure_kodi_settings()
+            elif choice == 1:
+                self.manage_addon_repositories()
             else:
                 self.tui.show_info("Coming Soon",
                     f"{menu_items[choice]} configuration\n"
                     "is not yet implemented")
+    
+    def configure_kodi_settings(self):
+        """Configure Kodi-specific settings"""
+        self.tui.show_info("Kodi Settings",
+            "Kodi configuration includes:\n"
+            "- Performance settings\n"
+            "- Cache optimization\n"
+            "- Audio/Video settings\n"
+            "- Library management\n\n"
+            "Not yet implemented")
+    
+    def manage_addon_repositories(self):
+        """Manage Kodi addon repositories"""
+        # Check if Kodi is installed
+        if not self.addon_manager.check_kodi_installed():
+            self.tui.show_warning("Kodi Not Found",
+                "Kodi installation not detected.\n"
+                "Please install Kodi first.")
+            return
+        
+        while True:
+            # Get repository status
+            installed_repos = self.addon_manager.get_installed_repositories()
+            
+            menu_items = []
+            
+            # Premium repositories (what was --umbrella and --fap)
+            menu_items.append("═══ PREMIUM REPOSITORIES ═══")
+            
+            # Umbrella
+            umbrella_status = " [INSTALLED]" if "umbrella" in installed_repos else ""
+            menu_items.append(f"Umbrella Repository{umbrella_status}")
+            
+            # FEN/Seren pack
+            fap_status = " [INSTALLED]" if "fap" in installed_repos else ""
+            menu_items.append(f"FEN/Seren Addon Pack{fap_status}")
+            
+            menu_items.append("═══ OTHER REPOSITORIES ═══")
+            
+            # Other repos
+            for repo_name in ["crew", "numbers", "shadow", "rising_tides"]:
+                repo_info = self.addon_manager.get_repository_info(repo_name)
+                if repo_info:
+                    status = " [INSTALLED]" if repo_info["installed"] else ""
+                    menu_items.append(f"{repo_info['name']}{status}")
+            
+            menu_items.extend([
+                "═══ MANAGEMENT ═══",
+                "Install Essential Addons",
+                "Configure Real-Debrid",
+                "Update All Repositories",
+                "Back"
+            ])
+            
+            choice = self.tui.menu("Addon Repository Management", menu_items)
+            
+            if choice is None or choice == len(menu_items) - 1:
+                break
+            elif choice == 1:  # Umbrella
+                self.install_repository("umbrella")
+            elif choice == 2:  # FEN/Seren
+                self.install_repository("fap")
+            elif choice == 4:  # Crew
+                self.install_repository("crew")
+            elif choice == 5:  # Numbers
+                self.install_repository("numbers")
+            elif choice == 6:  # Shadow
+                self.install_repository("shadow")
+            elif choice == 7:  # Rising Tides
+                self.install_repository("rising_tides")
+            elif choice == 9:  # Essential addons
+                self.install_essential_addons()
+            elif choice == 10:  # Real-Debrid
+                self.configure_real_debrid()
+            elif choice == 11:  # Update all
+                self.update_all_repositories()
+    
+    def install_repository(self, repo_name: str):
+        """Install a specific repository"""
+        repo_info = self.addon_manager.get_repository_info(repo_name)
+        if not repo_info:
+            self.tui.show_error("Error", f"Unknown repository: {repo_name}")
+            return
+        
+        if repo_info["installed"]:
+            self.tui.show_info("Already Installed",
+                f"{repo_info['name']} is already installed.")
+            return
+        
+        # Show repository details
+        details = f"{repo_info['name']}\n\n{repo_info['description']}\n\n"
+        details += "This will install:\n"
+        for addon in repo_info['addons']:
+            details += f"- {addon}\n"
+        details += "\nProceed with installation?"
+        
+        if self.tui.confirm("Install Repository", details):
+            self.tui.show_info("Installing", f"Installing {repo_info['name']}...")
+            
+            success, message = self.addon_manager.install_repository(repo_name)
+            
+            if success:
+                self.tui.show_success("Success", message)
+            else:
+                self.tui.show_error("Installation Failed", message)
+    
+    def install_essential_addons(self):
+        """Install essential/recommended addons"""
+        if self.tui.confirm("Install Essential Addons",
+            "This will install:\n"
+            "- YouTube\n"
+            "- Netflix (requires account)\n"
+            "- Spotify Connect\n"
+            "- Twitch\n\n"
+            "Continue?"):
+            
+            self.tui.show_info("Installing", "Installing essential addons...")
+            results = self.addon_manager.install_essential_addons()
+            
+            # Show results
+            success_count = sum(1 for r in results.values() if r)
+            total_count = len(results)
+            
+            if success_count == total_count:
+                self.tui.show_success("Success", 
+                    f"All {total_count} addons installed successfully!")
+            else:
+                self.tui.show_warning("Partial Success",
+                    f"Installed {success_count} of {total_count} addons.\n"
+                    "Check logs for details.")
+    
+    def configure_real_debrid(self):
+        """Configure Real-Debrid integration"""
+        self.tui.show_info("Real-Debrid Configuration",
+            "Real-Debrid provides premium links for streaming.\n\n"
+            "To configure:\n"
+            "1. Get your API key from real-debrid.com\n"
+            "2. Enter it in the next screen\n\n"
+            "This feature is not yet fully implemented.")
+    
+    def update_all_repositories(self):
+        """Update all installed repositories"""
+        installed = self.addon_manager.get_installed_repositories()
+        
+        if not installed:
+            self.tui.show_info("No Repositories",
+                "No repositories are currently installed.")
+            return
+        
+        if self.tui.confirm("Update Repositories",
+            f"Update {len(installed)} installed repositories?"):
+            
+            self.tui.show_info("Updating", "Updating repositories...")
+            results = self.addon_manager.update_all_repositories()
+            
+            success_count = sum(1 for r in results.values() if r)
+            self.tui.show_success("Update Complete",
+                f"Updated {success_count} of {len(results)} repositories.")
     
     def configure_network(self):
         """Network configuration"""
